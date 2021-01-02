@@ -23,4 +23,5 @@ jobs:
       - name: Run cmake
         run: |
           cmake -B build .
-          cmake -B build --config MinSizeRel
+          cd build
+          cmake . --config MinSizeRel
