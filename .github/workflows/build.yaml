@@ -22,6 +22,5 @@ jobs:
         uses: egor-tensin/vs-shell@v2
       - name: Run cmake
         run: |
-          cmake -B build .
-          cd build
-          cmake . --config MinSizeRel
+          cmake -B build
+          cmake --build build --config MinSizeRel
