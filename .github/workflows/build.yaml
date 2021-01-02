@@ -1,0 +1,26 @@
+name: build
+
+on:
+  workflow_dispatch:
+    inputs:
+      funchook:
+        required: true
+        description: "funchook ref"
+
+jobs:
+  funchook:
+    name: "Build FuncHook"
+    runs-on: windows-latest
+    steps:
+      - name: "Checkout FuncHook"
+        uses: actions/checkout@v2
+        with:
+          repository: kubo/funchook
+          ref: ${{github.event.inputs.funchook}}
+          submodules: true
+      - name: Set up Visual Studio shell
+        uses: egor-tensin/vs-shell@v2
+      - name: Run cmake
+        run: |
+          cmake -B build .
+          cmake -B build --config MinSizeRel
