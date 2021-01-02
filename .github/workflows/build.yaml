@@ -34,7 +34,7 @@ jobs:
           name: funchook
           path: build/MinSizeRel/funchook.dll
       - name: Create Release
-        if: ${{github.event.inputs.funchook == 'true'}}
+        if: ${{github.event.inputs.release == 'true'}}
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -45,7 +45,7 @@ jobs:
           draft: true
           prerelease: false
       - name: Upload Asset
-        if: ${{github.event.inputs.funchook == 'true'}}
+        if: ${{github.event.inputs.release == 'true'}}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
