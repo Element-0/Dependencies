@@ -9,10 +9,10 @@ on:
 
 jobs:
   funchook:
-    name: "Build FuncHook"
+    name: Build FuncHook
     runs-on: windows-latest
     steps:
-      - name: "Checkout FuncHook"
+      - name: Checkout FuncHook
         uses: actions/checkout@v2
         with:
           repository: kubo/funchook
@@ -24,3 +24,8 @@ jobs:
         run: |
           cmake -B build
           cmake --build build --config MinSizeRel
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: funchook
+          path: build/MinSizeRel/funchook.dll
