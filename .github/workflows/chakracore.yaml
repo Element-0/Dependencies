@@ -31,7 +31,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: chakracore
-          path: Build/VcBuild/bin/ChakraCore.dll
+          path: Build/VcBuild/bin/x64_release/ChakraCore.dll
       - name: Create Release
         if: ${{github.event.inputs.release == 'true'}}
         id: create_release
@@ -50,6 +50,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: Build/VcBuild/bin/ChakraCore.dll
+          asset_path: Build/VcBuild/bin/x64_release/ChakraCore.dll
           asset_name: ChakraCore.dll
           asset_content_type: application/octet-stream
