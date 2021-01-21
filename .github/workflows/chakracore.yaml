@@ -1,0 +1,56 @@
+name: chakracore
+
+on:
+  workflow_dispatch:
+    inputs:
+      chakracore:
+        required: true
+        description: "chakracore ref"
+      release:
+        required: false
+        default: "false"
+        description: "create release or not"
+
+jobs:
+  chakracore:
+    name: Build ChakraCore
+    runs-on: windows-latest
+    steps:
+      - name: Checkout ChakraCore
+        uses: actions/checkout@v2
+        with:
+          repository: chakra-core/ChakraCore
+          ref: ${{github.event.inputs.chakracore}}
+          submodules: true
+      - name: Set up Visual Studio shell
+        uses: egor-tensin/vs-shell@v2
+      - name: Run cmake
+        run: |
+          cmake -B build
+          cmake --build build --config MinSizeRel
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: chakracore
+          path: build/MinSizeRel/ChakraCore.dll
+      - name: Create Release
+        if: ${{github.event.inputs.release == 'true'}}
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: chakracore-${{github.event.inputs.chakracore}}
+          release_name: Release chakracore ${{github.event.inputs.chakracore}}
+          draft: true
+          prerelease: false
+      - name: Upload Asset
+        if: ${{github.event.inputs.release == 'true'}}
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: build/MinSizeRel/ChakraCore.dll
+          asset_name: ChakraCore.dll
+          asset_content_type: application/octet-stream
