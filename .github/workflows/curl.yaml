@@ -1,0 +1,56 @@
+name: curl
+
+on:
+  workflow_dispatch:
+    inputs:
+      curl:
+        required: true
+        description: "curl ref"
+      release:
+        required: false
+        default: "false"
+        description: "create release or not"
+
+jobs:
+  curl:
+    name: Build Curl
+    runs-on: windows-latest
+    steps:
+      - name: Checkout curl
+        uses: actions/checkout@v2
+        with:
+          repository: curl/curl
+          ref: ${{github.event.inputs.curl}}
+          submodules: true
+      - name: Set up Visual Studio shell
+        uses: egor-tensin/vs-shell@v2
+      - name: Run cmake
+        run: |
+          cmake -B build -DCMAKE_USE_SCHANNEL=ON
+          cmake --build build --config MinSizeRel
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: curl
+          path: build/MinSizeRel/libcurl.dll
+      - name: Create Release
+        if: ${{github.event.inputs.release == 'true'}}
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: curl-${{github.event.inputs.curl}}
+          release_name: Release curl ${{github.event.inputs.curl}}
+          draft: true
+          prerelease: false
+      - name: Upload Asset
+        if: ${{github.event.inputs.release == 'true'}}
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: build/MinSizeRel/libcurl.dll
+          asset_name: libcurl.dll
+          asset_content_type: application/octet-stream
