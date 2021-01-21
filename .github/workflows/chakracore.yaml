@@ -24,15 +24,14 @@ jobs:
           submodules: true
       - name: Set up Visual Studio shell
         uses: egor-tensin/vs-shell@v2
-      - name: Run cmake
+      - name: Run msbuild
         run: |
-          cmake -B dist -DCC_TARGETS_AMD64_SH=1
-          cmake --build dist --config MinSizeRel
+          msbuild /m /p:Platform=x64 /p:Configuration=Release Build\Chakra.Core.sln
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: chakracore
-          path: dist/MinSizeRel/ChakraCore.dll
+          path: Build/VcBuild/bin/ChakraCore.dll
       - name: Create Release
         if: ${{github.event.inputs.release == 'true'}}
         id: create_release
@@ -51,6 +50,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/MinSizeRel/ChakraCore.dll
+          asset_path: Build/VcBuild/bin/ChakraCore.dll
           asset_name: ChakraCore.dll
           asset_content_type: application/octet-stream
