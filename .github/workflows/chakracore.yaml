@@ -26,7 +26,7 @@ jobs:
         uses: egor-tensin/vs-shell@v2
       - name: Run cmake
         run: |
-          cmake -B dist
+          cmake -B dist -DCC_TARGETS_AMD64_SH=1
           cmake --build dist --config MinSizeRel
       - name: Upload artifact
         uses: actions/upload-artifact@v2
