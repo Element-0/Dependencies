@@ -32,7 +32,9 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: curl
-          path: build/MinSizeRel/libcurl.dll
+          path: |
+            build/lib/MinSizeRel/libcurl.dll
+            build/src/MinSizeRel/curl.exe
       - name: Create Release
         if: ${{github.event.inputs.release == 'true'}}
         id: create_release
@@ -44,13 +46,23 @@ jobs:
           release_name: Release curl ${{github.event.inputs.curl}}
           draft: true
           prerelease: false
-      - name: Upload Asset
+      - name: Upload Asset (libcurl.dll)
         if: ${{github.event.inputs.release == 'true'}}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: build/MinSizeRel/libcurl.dll
+          asset_path: build/lib/MinSizeRel/libcurl.dll
           asset_name: libcurl.dll
+          asset_content_type: application/octet-stream
+      - name: Upload Asset (curl.exe)
+        if: ${{github.event.inputs.release == 'true'}}
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: build/src/MinSizeRel/curl.exe
+          asset_name: curl.exe
           asset_content_type: application/octet-stream
